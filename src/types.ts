@@ -28,10 +28,17 @@ export interface ExtractResult {
 
 // --- Resume types ---
 
+export interface Meta {
+  generator?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 export interface Resume {
   version: string;
   profile: Profile;
   lang?: string;
+  meta?: Meta;
   basics: Basics;
   work?: WorkEntry[];
   education?: EducationEntry[];

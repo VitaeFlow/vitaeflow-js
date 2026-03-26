@@ -15,3 +15,6 @@ export const VITAEFLOW_XMP_PREFIX = 'vf';
 
 /** Recommended file extension for VitaeFlow-embedded PDFs. */
 export const VITAEFLOW_FILE_EXTENSION = '.vf.pdf';
+
+/** Default generator string used in XMP when meta.generator is not set. */
+export const SDK_GENERATOR_STRING = `@vitaeflow/sdk/${SCHEMA_VERSION}`;

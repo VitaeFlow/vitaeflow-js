@@ -68,6 +68,37 @@ describe('validateResume', () => {
       expect(result.valid).toBe(false);
     });
 
+    it('should accept a resume with meta', () => {
+      const resume = {
+        ...validResume,
+        meta: {
+          generator: 'VitaeFlow Builder/1.0',
+          createdAt: '2026-03-27',
+          updatedAt: '2026-03-27',
+        },
+      };
+      const result = validateResume(resume, { mode: 'strict' });
+      expect(result.valid).toBe(true);
+    });
+
+    it('should accept a resume with partial meta', () => {
+      const resume = {
+        ...validResume,
+        meta: { generator: 'MyApp/1.0' },
+      };
+      const result = validateResume(resume, { mode: 'strict' });
+      expect(result.valid).toBe(true);
+    });
+
+    it('should reject meta with unknown fields', () => {
+      const resume = {
+        ...validResume,
+        meta: { generator: 'MyApp/1.0', unknownField: 'x' },
+      };
+      const result = validateResume(resume, { mode: 'strict' });
+      expect(result.valid).toBe(false);
+    });
+
     it('should reject invalid skill level', () => {
       const resume = {
         ...validResume,

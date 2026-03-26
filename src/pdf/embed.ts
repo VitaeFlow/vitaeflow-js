@@ -5,6 +5,7 @@ import {
   VITAEFLOW_MIME_TYPE,
   VITAEFLOW_XMP_NAMESPACE,
   VITAEFLOW_XMP_PREFIX,
+  SDK_GENERATOR_STRING,
 } from '../constants.js';
 import type { Resume } from '../types.js';
 
@@ -51,6 +52,7 @@ export async function embedResume(
         DocumentType: 'RESUME',
         Version: resume.version,
         ConformanceLevel: resume.profile,
+        Generator: resume.meta?.generator ?? SDK_GENERATOR_STRING,
       },
     },
   });

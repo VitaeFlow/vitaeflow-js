@@ -24,6 +24,27 @@
       "examples": ["fr", "en", "de", "es"]
     },
 
+    "meta": {
+      "type": "object",
+      "description": "Metadata about the document itself (not the resume content).",
+      "additionalProperties": false,
+      "properties": {
+        "generator": {
+          "type": "string",
+          "description": "Tool or application that generated this document.",
+          "examples": ["VitaeFlow Builder/1.0", "Reactive Resume/4.0"]
+        },
+        "createdAt": {
+          "$ref": "#/$defs/date",
+          "description": "Date the document was originally created."
+        },
+        "updatedAt": {
+          "$ref": "#/$defs/date",
+          "description": "Date the document was last modified."
+        }
+      }
+    },
+
     "basics": {
       "type": "object",
       "description": "Core identity and contact information.",

@@ -12,6 +12,7 @@ export type {
   ValidationResult,
   ExtractResult,
   Resume,
+  Meta,
   Basics,
   Location,
   SocialProfile,
