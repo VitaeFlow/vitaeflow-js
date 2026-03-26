@@ -1,0 +1,482 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vitaeflow.org/schema/v1/schema.json",
+  "title": "VitaeFlow Resume Schema",
+  "description": "An open standard for embedding structured resume data in PDF files.",
+  "type": "object",
+  "required": ["version", "profile", "basics"],
+  "additionalProperties": false,
+
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Schema version (major.minor) used to generate this document.",
+      "pattern": "^[0-9]+\\.[0-9]+$"
+    },
+    "profile": {
+      "type": "string",
+      "description": "Conformance profile level.",
+      "enum": ["minimal", "basic", "standard", "full"]
+    },
+    "lang": {
+      "type": "string",
+      "description": "Language of the resume content (BCP 47).",
+      "examples": ["fr", "en", "de", "es"]
+    },
+
+    "basics": {
+      "type": "object",
+      "description": "Core identity and contact information.",
+      "required": ["givenName", "familyName", "email"],
+      "additionalProperties": false,
+      "properties": {
+        "givenName": {
+          "type": "string",
+          "description": "First name."
+        },
+        "familyName": {
+          "type": "string",
+          "description": "Last name."
+        },
+        "headline": {
+          "type": "string",
+          "description": "Professional headline or title (e.g. 'Senior Software Engineer')."
+        },
+        "email": {
+          "type": "string",
+          "format": "email"
+        },
+        "phone": {
+          "type": "string",
+          "description": "Phone number in international format.",
+          "examples": ["+33612345678"]
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "Personal website."
+        },
+        "image": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL to a profile photo."
+        },
+        "pronouns": {
+          "type": "string",
+          "examples": ["he/him", "she/her", "they/them"]
+        },
+        "summary": {
+          "type": "string",
+          "description": "A short professional summary."
+        },
+        "location": {
+          "$ref": "#/$defs/location"
+        },
+        "profiles": {
+          "type": "array",
+          "description": "Social and professional network profiles.",
+          "items": {
+            "type": "object",
+            "required": ["network", "url"],
+            "additionalProperties": false,
+            "properties": {
+              "network": {
+                "type": "string",
+                "description": "Network name (e.g. 'github', 'linkedin')."
+              },
+              "username": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string",
+                "format": "uri"
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "work": {
+      "type": "array",
+      "description": "Work experience entries.",
+      "items": {
+        "type": "object",
+        "required": ["organization", "position", "startDate"],
+        "additionalProperties": false,
+        "properties": {
+          "organization": {
+            "type": "string",
+            "description": "Company or organization name."
+          },
+          "position": {
+            "type": "string",
+            "description": "Job title or role."
+          },
+          "type": {
+            "type": "string",
+            "description": "Type of work arrangement.",
+            "enum": ["employment", "freelance", "contract", "internship"]
+          },
+          "remote": {
+            "type": "string",
+            "description": "Remote work arrangement.",
+            "enum": ["onsite", "remote", "hybrid"]
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Company website."
+          },
+          "location": {
+            "$ref": "#/$defs/location"
+          },
+          "startDate": {
+            "$ref": "#/$defs/date"
+          },
+          "endDate": {
+            "$ref": "#/$defs/date"
+          },
+          "summary": {
+            "type": "string",
+            "description": "Brief description of the role."
+          },
+          "highlights": {
+            "type": "array",
+            "description": "Key achievements or responsibilities.",
+            "items": { "type": "string" }
+          }
+        }
+      }
+    },
+
+    "education": {
+      "type": "array",
+      "description": "Education history.",
+      "items": {
+        "type": "object",
+        "required": ["institution", "startDate"],
+        "additionalProperties": false,
+        "properties": {
+          "institution": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "area": {
+            "type": "string",
+            "description": "Field of study."
+          },
+          "studyType": {
+            "type": "string",
+            "description": "Degree type (e.g. 'Bachelor', 'Master', 'PhD')."
+          },
+          "startDate": {
+            "$ref": "#/$defs/date"
+          },
+          "endDate": {
+            "$ref": "#/$defs/date"
+          },
+          "score": {
+            "type": "string",
+            "description": "Grade or score (e.g. 'Mention Bien', '3.8/4.0')."
+          },
+          "courses": {
+            "type": "array",
+            "description": "Notable courses taken.",
+            "items": { "type": "string" }
+          }
+        }
+      }
+    },
+
+    "skills": {
+      "type": "array",
+      "description": "Skills grouped by category.",
+      "items": {
+        "type": "object",
+        "required": ["category", "items"],
+        "additionalProperties": false,
+        "properties": {
+          "category": {
+            "type": "string",
+            "description": "Skill group name (e.g. 'Programming Languages', 'Frameworks')."
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["name"],
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "level": {
+                  "type": "string",
+                  "description": "Proficiency level.",
+                  "enum": ["beginner", "intermediate", "advanced", "expert"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "languages": {
+      "type": "array",
+      "description": "Language proficiencies.",
+      "items": {
+        "type": "object",
+        "required": ["language", "fluency"],
+        "additionalProperties": false,
+        "properties": {
+          "language": {
+            "type": "string",
+            "description": "Language name."
+          },
+          "code": {
+            "type": "string",
+            "description": "BCP 47 language code.",
+            "examples": ["fr", "en", "de"]
+          },
+          "fluency": {
+            "type": "string",
+            "description": "Proficiency level (CEFR or special value).",
+            "enum": ["A1", "A2", "B1", "B2", "C1", "C2", "native", "bilingual"]
+          }
+        }
+      }
+    },
+
+    "certifications": {
+      "type": "array",
+      "description": "Professional certifications.",
+      "items": {
+        "type": "object",
+        "required": ["name", "issuer"],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "issuer": {
+            "type": "string",
+            "description": "Issuing organization."
+          },
+          "date": {
+            "$ref": "#/$defs/date",
+            "description": "Date of issuance."
+          },
+          "validUntil": {
+            "$ref": "#/$defs/date",
+            "description": "Expiration date."
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL to verify the certification."
+          }
+        }
+      }
+    },
+
+    "projects": {
+      "type": "array",
+      "description": "Personal or professional projects.",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "startDate": {
+            "$ref": "#/$defs/date"
+          },
+          "endDate": {
+            "$ref": "#/$defs/date"
+          },
+          "highlights": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "keywords": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "roles": {
+            "type": "array",
+            "description": "Roles held in the project.",
+            "items": { "type": "string" }
+          }
+        }
+      }
+    },
+
+    "publications": {
+      "type": "array",
+      "description": "Published works.",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "publisher": {
+            "type": "string"
+          },
+          "date": {
+            "$ref": "#/$defs/date"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "summary": {
+            "type": "string"
+          }
+        }
+      }
+    },
+
+    "volunteer": {
+      "type": "array",
+      "description": "Volunteer experience.",
+      "items": {
+        "type": "object",
+        "required": ["organization", "position"],
+        "additionalProperties": false,
+        "properties": {
+          "organization": {
+            "type": "string"
+          },
+          "position": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "startDate": {
+            "$ref": "#/$defs/date"
+          },
+          "endDate": {
+            "$ref": "#/$defs/date"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "highlights": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      }
+    },
+
+    "references": {
+      "type": "array",
+      "description": "Professional references.",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Referee's full name."
+          },
+          "position": {
+            "type": "string",
+            "description": "Referee's job title."
+          },
+          "organization": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "relationship": {
+            "type": "string",
+            "description": "Professional relationship (e.g. 'Direct Manager', 'CTO')."
+          }
+        }
+      }
+    },
+
+    "interests": {
+      "type": "array",
+      "description": "Personal interests and hobbies.",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "keywords": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      }
+    },
+
+    "custom": {
+      "type": "object",
+      "description": "Free-form extension data for domain-specific needs."
+    }
+  },
+
+  "$defs": {
+    "date": {
+      "type": "string",
+      "description": "Date in ISO 8601 format: YYYY, YYYY-MM, or YYYY-MM-DD.",
+      "pattern": "^[0-9]{4}(-(?:0[1-9]|1[0-2])(-(?:0[1-9]|[12][0-9]|3[01]))?)?$"
+    },
+    "location": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "address": {
+          "type": "string",
+          "description": "Street address."
+        },
+        "city": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string",
+          "description": "State, province, or region."
+        },
+        "postalCode": {
+          "type": "string"
+        },
+        "countryCode": {
+          "type": "string",
+          "description": "ISO 3166-1 alpha-2 country code.",
+          "pattern": "^[A-Z]{2}$"
+        }
+      }
+    }
+  }
+}

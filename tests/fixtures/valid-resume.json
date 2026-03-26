@@ -1,0 +1,40 @@
+{
+  "version": "0.1",
+  "profile": "standard",
+  "lang": "fr",
+  "basics": {
+    "givenName": "Marie",
+    "familyName": "Laurent",
+    "headline": "Développeuse Full Stack",
+    "email": "marie.laurent@example.com"
+  },
+  "work": [
+    {
+      "organization": "TechCorp",
+      "position": "Lead Developer",
+      "type": "employment",
+      "startDate": "2021-03"
+    }
+  ],
+  "education": [
+    {
+      "institution": "INSA Lyon",
+      "area": "Informatique",
+      "startDate": "2011-09",
+      "endDate": "2016-06"
+    }
+  ],
+  "skills": [
+    {
+      "category": "Langages",
+      "items": [
+        { "name": "TypeScript", "level": "expert" },
+        { "name": "Python", "level": "advanced" }
+      ]
+    }
+  ],
+  "languages": [
+    { "language": "Français", "code": "fr", "fluency": "native" },
+    { "language": "Anglais", "code": "en", "fluency": "C1" }
+  ]
+}

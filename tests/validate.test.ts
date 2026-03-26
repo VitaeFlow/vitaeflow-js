@@ -1,0 +1,170 @@
+import { describe, it, expect } from 'vitest';
+import { validateResume } from '../src/index.js';
+import validResume from './fixtures/valid-resume.json';
+
+describe('validateResume', () => {
+  describe('strict mode', () => {
+    it('should accept a valid resume', () => {
+      const result = validateResume(validResume, { mode: 'strict' });
+      expect(result.valid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it('should reject non-object input', () => {
+      const result = validateResume('not an object', { mode: 'strict' });
+      expect(result.valid).toBe(false);
+      expect(result.errors[0].message).toContain('object');
+    });
+
+    it('should reject null input', () => {
+      const result = validateResume(null, { mode: 'strict' });
+      expect(result.valid).toBe(false);
+      expect(result.errors[0].message).toContain('object');
+    });
+
+    it('should reject undefined input', () => {
+      const result = validateResume(undefined, { mode: 'strict' });
+      expect(result.valid).toBe(false);
+      expect(result.errors[0].message).toContain('object');
+    });
+
+    it('should reject missing required fields', () => {
+      const result = validateResume({ version: '0.1' }, { mode: 'strict' });
+      expect(result.valid).toBe(false);
+      expect(result.errors.some((e) => e.message.includes('profile'))).toBe(true);
+    });
+
+    it('should reject unknown fields', () => {
+      const result = validateResume(
+        { ...validResume, unknownField: 'test' },
+        { mode: 'strict' },
+      );
+      expect(result.valid).toBe(false);
+      expect(result.errors.some((e) => e.message.includes('unknownField'))).toBe(true);
+    });
+
+    it('should reject invalid email format', () => {
+      const resume = {
+        ...validResume,
+        basics: { ...validResume.basics, email: 'not-an-email' },
+      };
+      const result = validateResume(resume, { mode: 'strict' });
+      expect(result.valid).toBe(false);
+      expect(result.errors.some((e) => e.message.includes('email'))).toBe(true);
+    });
+
+    it('should reject invalid date format', () => {
+      const resume = {
+        ...validResume,
+        work: [{ ...validResume.work[0], startDate: '2021-13-45' }],
+      };
+      const result = validateResume(resume, { mode: 'strict' });
+      expect(result.valid).toBe(false);
+    });
+
+    it('should reject invalid profile value', () => {
+      const resume = { ...validResume, profile: 'mega' };
+      const result = validateResume(resume, { mode: 'strict' });
+      expect(result.valid).toBe(false);
+    });
+
+    it('should reject invalid skill level', () => {
+      const resume = {
+        ...validResume,
+        skills: [{ category: 'Test', items: [{ name: 'X', level: 'godlike' }] }],
+      };
+      const result = validateResume(resume, { mode: 'strict' });
+      expect(result.valid).toBe(false);
+    });
+
+    it('should validate profile requirements — basic missing education', () => {
+      const resume = {
+        version: '0.1',
+        profile: 'basic',
+        basics: { givenName: 'A', familyName: 'B', email: 'a@b.com' },
+        work: [{ organization: 'X', position: 'Y', startDate: '2020' }],
+      };
+      const result = validateResume(resume, { mode: 'strict' });
+      expect(result.valid).toBe(false);
+      expect(result.errors.some((e) => e.message.includes('education'))).toBe(true);
+    });
+
+    it('should validate standard profile requirements', () => {
+      const resume = {
+        version: '0.1',
+        profile: 'standard',
+        basics: { givenName: 'A', familyName: 'B', email: 'a@b.com' },
+        work: [{ organization: 'X', position: 'Y', startDate: '2020' }],
+        education: [{ institution: 'U', startDate: '2015' }],
+        // missing skills and languages — required for standard
+      };
+      const result = validateResume(resume, { mode: 'strict' });
+      expect(result.valid).toBe(false);
+      expect(result.errors.some((e) => e.message.includes('skills') || e.message.includes('languages'))).toBe(true);
+    });
+
+    it('should validate full profile requirements', () => {
+      const resume = {
+        version: '0.1',
+        profile: 'full',
+        basics: { givenName: 'A', familyName: 'B', email: 'a@b.com' },
+        work: [{ organization: 'X', position: 'Y', startDate: '2020' }],
+        education: [{ institution: 'U', startDate: '2015' }],
+        skills: [{ category: 'Dev', items: [{ name: 'JS' }] }],
+        languages: [{ language: 'French', fluency: 'native' }],
+        // missing certifications and projects — required for full
+      };
+      const result = validateResume(resume, { mode: 'strict' });
+      expect(result.valid).toBe(false);
+      expect(result.errors.some((e) => e.message.includes('certifications') || e.message.includes('projects'))).toBe(true);
+    });
+  });
+
+  describe('tolerant mode', () => {
+    it('should accept a valid resume', () => {
+      const result = validateResume(validResume, { mode: 'tolerant' });
+      expect(result.valid).toBe(true);
+    });
+
+    it('should accept unknown fields', () => {
+      const result = validateResume(
+        { ...validResume, futureField: 'from v2.0' },
+        { mode: 'tolerant' },
+      );
+      expect(result.valid).toBe(true);
+    });
+
+    it('should warn about newer schema version', () => {
+      const resume = { ...validResume, version: '99.0' };
+      const result = validateResume(resume, { mode: 'tolerant' });
+      expect(result.warnings.length).toBeGreaterThan(0);
+      expect(result.warnings[0]).toContain('99.0');
+    });
+
+    it('should not warn for equal schema version', () => {
+      const result = validateResume(validResume, { mode: 'tolerant' });
+      expect(result.warnings).toHaveLength(0);
+    });
+
+    it('should not warn for malformed version strings', () => {
+      const resume = { ...validResume, version: 'not-a-version' };
+      const result = validateResume(resume, { mode: 'tolerant' });
+      // Should not crash, and should not produce a misleading warning
+      expect(result.warnings).toHaveLength(0);
+    });
+
+    it('should still reject structural errors', () => {
+      const result = validateResume(
+        { version: '0.1', profile: 'minimal' },
+        { mode: 'tolerant' },
+      );
+      expect(result.valid).toBe(false);
+      expect(result.errors.some((e) => e.message.includes('basics'))).toBe(true);
+    });
+  });
+
+  it('should default to strict mode', () => {
+    const result = validateResume({ ...validResume, unknownField: 'x' });
+    expect(result.valid).toBe(false);
+  });
+});

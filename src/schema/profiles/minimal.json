@@ -1,0 +1,8 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vitaeflow.org/schema/v1/profiles/minimal.json",
+  "title": "VitaeFlow Minimal Profile",
+  "description": "Requires only basic identity and contact information.",
+  "$ref": "https://vitaeflow.org/schema/v1/schema.json",
+  "required": ["version", "profile", "basics"]
+}

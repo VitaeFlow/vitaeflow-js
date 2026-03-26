@@ -1,0 +1,53 @@
+{
+  "name": "@vitaeflow/sdk",
+  "version": "0.1.0",
+  "description": "VitaeFlow SDK — validate, embed, and extract structured resumes in PDF files",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "tsc --noEmit"
+  },
+  "keywords": [
+    "vitaeflow",
+    "resume",
+    "cv",
+    "pdf",
+    "json-schema",
+    "validation"
+  ],
+  "engines": {
+    "node": ">=20.10"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/VitaeFlow/vitaeflow-js.git"
+  },
+  "vitaeflow": {
+    "schemaVersion": "0.1"
+  },
+  "dependencies": {
+    "@vitaeflow/pdf-embed": "file:../pdf-embed-js",
+    "ajv": "^8.17.0",
+    "ajv-formats": "^3.0.0"
+  },
+  "devDependencies": {
+    "pdf-lib": "^1.17.1",
+    "tsup": "^8.0.0",
+    "typescript": "^5.5.0",
+    "vitest": "^3.0.0"
+  }
+}

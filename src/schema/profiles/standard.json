@@ -1,0 +1,8 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vitaeflow.org/schema/v1/profiles/standard.json",
+  "title": "VitaeFlow Standard Profile",
+  "description": "Requires identity, work, education, skills, and languages.",
+  "$ref": "https://vitaeflow.org/schema/v1/schema.json",
+  "required": ["version", "profile", "basics", "work", "education", "skills", "languages"]
+}
