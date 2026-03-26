@@ -1,7 +1,8 @@
 export { validateResume } from './validation/validate.js';
 export { embedResume } from './pdf/embed.js';
 export { extractResume, isVitaeFlowPdf } from './pdf/extract.js';
-export { SCHEMA_VERSION } from './constants.js';
+export { isVitaeFlowFilename, formatVitaeFlowFilename } from './filename.js';
+export { SCHEMA_VERSION, VITAEFLOW_FILE_EXTENSION } from './constants.js';
 
 export type {
   Profile,
