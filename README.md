@@ -51,7 +51,7 @@ const result = await embedResume(pdf, resume);
 writeFileSync('cv.vf.pdf', result);
 ```
 
-The resume is validated in strict mode before embedding. If invalid, an error is thrown.
+The resume is validated in strict mode before embedding. If invalid, an error is thrown. Using the `.vf.pdf` suffix is recommended for discoverability, but not required.
 
 ### Extract a resume from a PDF
 
@@ -76,20 +76,6 @@ const has = await isVitaeFlowPdf(pdf);
 // true or false
 ```
 
-### Filename convention
-
-VitaeFlow PDFs use the `.vf.pdf` extension for discoverability.
-
-```ts
-import { formatVitaeFlowFilename, isVitaeFlowFilename } from '@vitaeflow/sdk';
-
-formatVitaeFlowFilename('cv.pdf');       // 'cv.vf.pdf'
-formatVitaeFlowFilename('cv.vf.pdf');    // 'cv.vf.pdf' (no change)
-
-isVitaeFlowFilename('cv.vf.pdf');        // true
-isVitaeFlowFilename('cv.pdf');           // false
-```
-
 ## API
 
 ### Validation
@@ -106,19 +92,11 @@ isVitaeFlowFilename('cv.pdf');           // false
 | `extractResume(pdf, options?)` | Extract and validate a resume from a PDF |
 | `isVitaeFlowPdf(pdf)` | Check if a PDF contains VitaeFlow data |
 
-### Filename helpers
-
-| Function | Description |
-|----------|-------------|
-| `formatVitaeFlowFilename(name)` | Apply the `.vf.pdf` convention |
-| `isVitaeFlowFilename(name)` | Check if a filename ends with `.vf.pdf` |
-
 ### Constants
 
 | Constant | Value |
 |----------|-------|
 | `SCHEMA_VERSION` | `'0.1'` |
-| `VITAEFLOW_FILE_EXTENSION` | `'.vf.pdf'` |
 
 ## Types
 
@@ -126,7 +104,7 @@ All TypeScript types are exported: `Resume`, `Meta`, `Basics`, `Location`, `Soci
 
 ## What is VitaeFlow?
 
-VitaeFlow is an open standard for embedding structured JSON resume data in PDF files. A `.vf.pdf` file is a normal PDF readable by anyone, but it also contains machine-readable data for ATS, job boards, and HR tools.
+VitaeFlow is an open standard for embedding structured JSON resume data in PDF files. A VitaeFlow PDF is a normal PDF readable by anyone, but it also contains machine-readable data for ATS, job boards, and HR tools. The `.vf.pdf` suffix is recommended, not required.
 
 - [Specification](https://github.com/VitaeFlow/vitaeflow-spec)
 - [CLI](https://github.com/VitaeFlow/vitaeflow-cli)
