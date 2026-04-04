@@ -108,46 +108,14 @@ describe('validateResume', () => {
       expect(result.valid).toBe(false);
     });
 
-    it('should validate profile requirements — basic missing education', () => {
-      const resume = {
-        version: '0.1',
-        profile: 'basic',
-        basics: { givenName: 'A', familyName: 'B', email: 'a@b.com' },
-        work: [{ organization: 'X', position: 'Y', startDate: '2020' }],
-      };
-      const result = validateResume(resume, { mode: 'strict' });
-      expect(result.valid).toBe(false);
-      expect(result.errors.some((e) => e.message.includes('education'))).toBe(true);
-    });
-
-    it('should validate standard profile requirements', () => {
+    it('should accept a minimal resume with only basics', () => {
       const resume = {
         version: '0.1',
         profile: 'standard',
         basics: { givenName: 'A', familyName: 'B', email: 'a@b.com' },
-        work: [{ organization: 'X', position: 'Y', startDate: '2020' }],
-        education: [{ institution: 'U', startDate: '2015' }],
-        // missing skills and languages — required for standard
       };
       const result = validateResume(resume, { mode: 'strict' });
-      expect(result.valid).toBe(false);
-      expect(result.errors.some((e) => e.message.includes('skills') || e.message.includes('languages'))).toBe(true);
-    });
-
-    it('should validate full profile requirements', () => {
-      const resume = {
-        version: '0.1',
-        profile: 'full',
-        basics: { givenName: 'A', familyName: 'B', email: 'a@b.com' },
-        work: [{ organization: 'X', position: 'Y', startDate: '2020' }],
-        education: [{ institution: 'U', startDate: '2015' }],
-        skills: [{ category: 'Dev', items: [{ name: 'JS' }] }],
-        languages: [{ language: 'French', fluency: 'native' }],
-        // missing certifications and projects — required for full
-      };
-      const result = validateResume(resume, { mode: 'strict' });
-      expect(result.valid).toBe(false);
-      expect(result.errors.some((e) => e.message.includes('certifications') || e.message.includes('projects'))).toBe(true);
+      expect(result.valid).toBe(true);
     });
   });
 
@@ -186,7 +154,7 @@ describe('validateResume', () => {
 
     it('should still reject structural errors', () => {
       const result = validateResume(
-        { version: '0.1', profile: 'minimal' },
+        { version: '0.1', profile: 'standard' },
         { mode: 'tolerant' },
       );
       expect(result.valid).toBe(false);

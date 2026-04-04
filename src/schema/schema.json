@@ -15,8 +15,8 @@
     },
     "profile": {
       "type": "string",
-      "description": "Conformance profile level.",
-      "enum": ["minimal", "basic", "standard", "full"]
+      "description": "Conformance profile. Always \"standard\".",
+      "const": "standard"
     },
     "lang": {
       "type": "string",

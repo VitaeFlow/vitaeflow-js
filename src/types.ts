@@ -1,4 +1,4 @@
-export type Profile = 'minimal' | 'basic' | 'standard' | 'full';
+export type Profile = 'standard';
 
 export type ValidationMode = 'strict' | 'tolerant';
 

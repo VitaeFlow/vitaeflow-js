@@ -1,17 +1,14 @@
 import type { ErrorObject } from 'ajv';
-import { getSchemaValidator, getProfileValidator } from '../schema/compiler.js';
+import { getSchemaValidator } from '../schema/compiler.js';
 import { SCHEMA_VERSION } from '../constants.js';
 import type {
-  Profile,
   ValidationError,
   ValidationOptions,
   ValidationResult,
 } from '../types.js';
 
-const VALID_PROFILES = new Set<string>(['minimal', 'basic', 'standard', 'full']);
-
 /**
- * Validate a resume object against the VitaeFlow schema and its declared profile.
+ * Validate a resume object against the VitaeFlow schema.
  *
  * @param data - The resume data to validate (unknown type for safety).
  * @param options - Validation options. Defaults to strict mode.
@@ -45,30 +42,12 @@ export function validateResume(
     }
   }
 
-  // Validate against main schema
+  // Validate against schema
   const schemaValidator = getSchemaValidator(mode);
   const schemaValid = schemaValidator(data);
 
   if (!schemaValid && schemaValidator.errors) {
     errors.push(...formatAjvErrors(schemaValidator.errors));
-  }
-
-  // Validate against profile if present and valid
-  const profile = obj.profile;
-  if (typeof profile === 'string' && VALID_PROFILES.has(profile)) {
-    const profileValidator = getProfileValidator(profile as Profile, mode);
-    const profileValid = profileValidator(data);
-
-    if (!profileValid && profileValidator.errors) {
-      const profileErrors = formatAjvErrors(profileValidator.errors);
-      // Avoid duplicate errors — only add profile-specific ones
-      const existingPaths = new Set(errors.map((e) => `${e.path}:${e.message}`));
-      for (const err of profileErrors) {
-        if (!existingPaths.has(`${err.path}:${err.message}`)) {
-          errors.push(err);
-        }
-      }
-    }
   }
 
   return {
@@ -94,6 +73,9 @@ function formatErrorMessage(err: ErrorObject): string {
   }
   if (err.keyword === 'enum') {
     return `Must be one of: ${err.params.allowedValues.join(', ')}`;
+  }
+  if (err.keyword === 'const') {
+    return `Must be: ${err.params.allowedValue}`;
   }
   if (err.keyword === 'pattern') {
     return `Does not match expected format`;

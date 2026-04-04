@@ -1,19 +1,7 @@
 import Ajv2020, { type AnySchema, type ValidateFunction } from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
-import type { Profile } from '../types.js';
 
 import schema from './schema.json' with { type: 'json' };
-import minimalProfile from './profiles/minimal.json' with { type: 'json' };
-import basicProfile from './profiles/basic.json' with { type: 'json' };
-import standardProfile from './profiles/standard.json' with { type: 'json' };
-import fullProfile from './profiles/full.json' with { type: 'json' };
-
-const profileSchemas: Record<Profile, AnySchema> = {
-  minimal: minimalProfile as AnySchema,
-  basic: basicProfile as AnySchema,
-  standard: standardProfile as AnySchema,
-  full: fullProfile as AnySchema,
-};
 
 /**
  * Recursively remove all `additionalProperties: false` from a schema.
@@ -40,7 +28,7 @@ function createAjv(): Ajv2020 {
   return ajv;
 }
 
-// One Ajv instance per mode — shared across schema + profile validators.
+// One Ajv instance per mode.
 let strictAjv: Ajv2020 | undefined;
 let tolerantAjv: Ajv2020 | undefined;
 
@@ -65,7 +53,6 @@ function getAjv(mode: 'strict' | 'tolerant'): Ajv2020 {
 
 let strictValidator: ValidateFunction | undefined;
 let tolerantValidator: ValidateFunction | undefined;
-const profileValidatorCache = new Map<string, ValidateFunction>();
 
 /** Get the compiled schema validator for the given mode. */
 export function getSchemaValidator(mode: 'strict' | 'tolerant'): ValidateFunction {
@@ -82,27 +69,4 @@ export function getSchemaValidator(mode: 'strict' | 'tolerant'): ValidateFunctio
     tolerantValidator = ajv.getSchema(schema.$id) as ValidateFunction;
   }
   return tolerantValidator;
-}
-
-/** Get the compiled profile validator for the given profile and mode. */
-export function getProfileValidator(
-  profile: Profile,
-  mode: 'strict' | 'tolerant',
-): ValidateFunction {
-  const key = `${mode}:${profile}`;
-  let validator = profileValidatorCache.get(key);
-  if (!validator) {
-    const profileSchema = profileSchemas[profile];
-    if (!profileSchema) {
-      throw new Error(`Unknown profile: ${profile}`);
-    }
-
-    const ajv = getAjv(mode);
-    validator = ajv.compile(
-      mode === 'strict' ? profileSchema : stripAdditionalProperties(profileSchema),
-    );
-    profileValidatorCache.set(key, validator);
-  }
-
-  return validator;
 }

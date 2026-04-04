@@ -27,7 +27,7 @@ if (result.valid) {
 ```
 
 Modes:
-- **strict** — rejects unknown fields, enforces profile requirements
+- **strict** — rejects unknown fields
 - **tolerant** — ignores unknown fields, warns about version mismatch (forward-compatible)
 
 ### Embed a resume in a PDF
