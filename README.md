@@ -1,6 +1,11 @@
 # @vitaeflow/sdk
 
-JavaScript SDK for the [VitaeFlow](https://vitaeflow.org) open standard — validate, embed, and extract structured resumes in PDF files.
+[![npm version](https://img.shields.io/npm/v/@vitaeflow/sdk.svg)](https://www.npmjs.com/package/@vitaeflow/sdk)
+[![license](https://img.shields.io/npm/l/@vitaeflow/sdk.svg)](LICENSE)
+
+JavaScript/TypeScript SDK for the [VitaeFlow](https://vitaeflow.org) open standard — validate, embed, and extract structured resumes in PDF files.
+
+Works in Node.js and the browser.
 
 ## Install
 
@@ -8,7 +13,7 @@ JavaScript SDK for the [VitaeFlow](https://vitaeflow.org) open standard — vali
 npm install @vitaeflow/sdk
 ```
 
-## Usage
+## Quick start
 
 ### Validate a resume
 
@@ -26,9 +31,9 @@ if (result.valid) {
 }
 ```
 
-Modes:
-- **strict** — rejects unknown fields
-- **tolerant** — ignores unknown fields, warns about version mismatch (forward-compatible)
+Two validation modes:
+- **strict** — rejects unknown fields (recommended for writing)
+- **tolerant** — ignores unknown fields, warns about version mismatch (forward-compatible, recommended for reading)
 
 ### Embed a resume in a PDF
 
@@ -42,28 +47,26 @@ const resume = {
   profile: 'standard',
   basics: { givenName: 'Marie', familyName: 'Laurent', email: 'marie@example.com' },
   work: [{ organization: 'TechCorp', position: 'Lead Dev', startDate: '2021-03' }],
-  education: [{ institution: 'INSA Lyon', startDate: '2011-09' }],
-  skills: [{ category: 'Languages', items: [{ name: 'TypeScript', level: 'expert' }] }],
-  languages: [{ language: 'French', fluency: 'native' }],
 };
 
 const result = await embedResume(pdf, resume);
 writeFileSync('cv.vf.pdf', result);
 ```
 
-The resume is validated in strict mode before embedding. If invalid, an error is thrown. Using the `.vf.pdf` suffix is recommended for discoverability, but not required.
+The resume is validated in strict mode before embedding. If invalid, an error is thrown.
 
 ### Extract a resume from a PDF
 
 ```ts
 import { extractResume } from '@vitaeflow/sdk';
+import { readFileSync } from 'fs';
 
 const pdf = new Uint8Array(readFileSync('cv.vf.pdf'));
 const result = await extractResume(pdf);
 
-if (result) {
-  console.log(result.resume);       // Resume object (or null if invalid)
-  console.log(result.validation);   // { valid, errors, warnings }
+if (result?.resume) {
+  console.log(result.resume.basics.givenName); // "Marie"
+  console.log(result.validation.valid);        // true
 }
 ```
 
@@ -72,42 +75,32 @@ if (result) {
 ```ts
 import { isVitaeFlowPdf } from '@vitaeflow/sdk';
 
-const has = await isVitaeFlowPdf(pdf);
-// true or false
+const has = await isVitaeFlowPdf(pdf); // true or false
 ```
 
 ## API
 
-### Validation
-
 | Function | Description |
 |----------|-------------|
 | `validateResume(data, options?)` | Validate a resume against the VitaeFlow schema |
-
-### PDF operations
-
-| Function | Description |
-|----------|-------------|
 | `embedResume(pdf, resume)` | Validate and embed a resume in a PDF |
 | `extractResume(pdf, options?)` | Extract and validate a resume from a PDF |
 | `isVitaeFlowPdf(pdf)` | Check if a PDF contains VitaeFlow data |
-
-### Constants
-
-| Constant | Value |
-|----------|-------|
-| `SCHEMA_VERSION` | `'0.1'` |
+| `SCHEMA_VERSION` | Current schema version (`'0.1'`) |
 
 ## Types
 
-All TypeScript types are exported: `Resume`, `Meta`, `Basics`, `Location`, `SocialProfile`, `WorkEntry`, `EducationEntry`, `SkillCategory`, `SkillItem`, `LanguageEntry`, `CertificationEntry`, `ProjectEntry`, `PublicationEntry`, `VolunteerEntry`, `ReferenceEntry`, `InterestEntry`, `Profile`, `ValidationResult`, `ValidationError`, `ExtractResult`.
+All TypeScript types are exported:
 
-## What is VitaeFlow?
+`Resume` `Meta` `Basics` `Location` `SocialProfile` `WorkEntry` `EducationEntry` `SkillCategory` `SkillItem` `LanguageEntry` `CertificationEntry` `ProjectEntry` `PublicationEntry` `VolunteerEntry` `ReferenceEntry` `InterestEntry` `ValidationResult` `ValidationError` `ExtractResult`
 
-VitaeFlow is an open standard for embedding structured JSON resume data in PDF files. A VitaeFlow PDF is a normal PDF readable by anyone, but it also contains machine-readable data for ATS, job boards, and HR tools. The `.vf.pdf` suffix is recommended, not required.
+## Ecosystem
 
-- [Specification](https://github.com/VitaeFlow/vitaeflow-spec)
-- [CLI](https://github.com/VitaeFlow/vitaeflow-cli)
+| Project | Description |
+|---------|-------------|
+| [VitaeFlow Spec](https://github.com/VitaeFlow/vitaeflow-spec) | JSON schema and PDF embedding standard |
+| [vitaeflow CLI](https://github.com/VitaeFlow/vitaeflow-cli) | Command-line tool |
+| [vitaeflow.org](https://vitaeflow.org) | Website with interactive tools |
 
 ## License
 
