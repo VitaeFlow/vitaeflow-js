@@ -5,6 +5,9 @@ export { SCHEMA_VERSION } from './constants.js';
 
 export type {
   Profile,
+  JsonValue,
+  Extensions,
+  Extensible,
   ValidationMode,
   ValidationOptions,
   ValidationError,

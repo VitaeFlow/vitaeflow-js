@@ -1,6 +1,6 @@
 {
   "name": "@vitaeflow/sdk",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "VitaeFlow SDK — validate, embed, and extract structured resumes in PDF files",
   "type": "module",
   "main": "./dist/index.js",
@@ -39,7 +39,7 @@
   "homepage": "https://github.com/VitaeFlow/vitaeflow-js#readme",
   "bugs": "https://github.com/VitaeFlow/vitaeflow-js/issues",
   "vitaeflow": {
-    "schemaVersion": "0.1"
+    "schemaVersion": "0.2"
   },
   "dependencies": {
     "@vitaeflow/pdf-embed": "^0.1.1",

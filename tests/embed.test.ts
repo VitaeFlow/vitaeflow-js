@@ -21,7 +21,7 @@ describe('embedResume', () => {
 
   it('should throw on invalid resume', async () => {
     const pdf = await createBlankPdf();
-    const invalidResume = { version: '0.1', profile: 'minimal' } as Resume;
+    const invalidResume = { version: '0.2', profile: 'minimal' } as Resume;
 
     await expect(embedResume(pdf, invalidResume)).rejects.toThrow('Invalid resume');
   });

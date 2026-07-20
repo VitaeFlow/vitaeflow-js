@@ -29,7 +29,7 @@ describe('validateResume', () => {
     });
 
     it('should reject missing required fields', () => {
-      const result = validateResume({ version: '0.1' }, { mode: 'strict' });
+      const result = validateResume({ version: '0.2' }, { mode: 'strict' });
       expect(result.valid).toBe(false);
       expect(result.errors.some((e) => e.message.includes('profile'))).toBe(true);
     });
@@ -110,12 +110,63 @@ describe('validateResume', () => {
 
     it('should accept a minimal resume with only basics', () => {
       const resume = {
-        version: '0.1',
+        version: '0.2',
         profile: 'standard',
         basics: { givenName: 'A', familyName: 'B', email: 'a@b.com' },
       };
       const result = validateResume(resume, { mode: 'strict' });
       expect(result.valid).toBe(true);
+    });
+
+    it('should accept namespaced extensions on nested objects', () => {
+      const resume = {
+        ...validResume,
+        basics: {
+          ...validResume.basics,
+          extensions: {
+            'com.example.identity': { employeeId: 'EMP-42' },
+          },
+        },
+        work: [{
+          ...validResume.work[0],
+          extensions: {
+            'com.linkedin': {
+              positionId: 'abc123',
+              featured: true,
+              labels: ['public', null],
+            },
+          },
+        }],
+      };
+
+      const result = validateResume(resume, { mode: 'strict' });
+      expect(result.valid).toBe(true);
+    });
+
+    it('should reject extension keys that are not reverse-DNS namespaced', () => {
+      const resume = {
+        ...validResume,
+        extensions: { linkedin: { id: 'abc123' } },
+      };
+
+      const result = validateResume(resume, { mode: 'strict' });
+      expect(result.valid).toBe(false);
+    });
+
+    it('should reject non-JSON extension values', () => {
+      const resume = {
+        ...validResume,
+        extensions: { 'com.example': { transform: undefined } },
+      };
+
+      const result = validateResume(resume, { mode: 'strict' });
+      expect(result.valid).toBe(false);
+    });
+
+    it('should reject the removed custom field', () => {
+      const resume = { ...validResume, custom: { foo: 'bar' } };
+      const result = validateResume(resume, { mode: 'strict' });
+      expect(result.valid).toBe(false);
     });
   });
 
@@ -154,7 +205,7 @@ describe('validateResume', () => {
 
     it('should still reject structural errors', () => {
       const result = validateResume(
-        { version: '0.1', profile: 'standard' },
+        { version: '0.2', profile: 'standard' },
         { mode: 'tolerant' },
       );
       expect(result.valid).toBe(false);

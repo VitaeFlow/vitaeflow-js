@@ -2,6 +2,21 @@ export type Profile = 'standard';
 
 export type ValidationMode = 'strict' | 'tolerant';
 
+export type JsonValue =
+  | string
+  | number
+  | boolean
+  | null
+  | JsonValue[]
+  | { [key: string]: JsonValue };
+
+export type Extensions = Record<string, JsonValue>;
+
+export interface Extensible {
+  /** Domain-specific data keyed by a reverse-DNS namespace. */
+  extensions?: Extensions;
+}
+
 export interface ValidationOptions {
   mode?: ValidationMode;
 }
@@ -28,13 +43,13 @@ export interface ExtractResult {
 
 // --- Resume types ---
 
-export interface Meta {
+export interface Meta extends Extensible {
   generator?: string;
   createdAt?: string;
   updatedAt?: string;
 }
 
-export interface Resume {
+export interface Resume extends Extensible {
   version: string;
   profile: Profile;
   lang?: string;
@@ -50,10 +65,9 @@ export interface Resume {
   volunteer?: VolunteerEntry[];
   references?: ReferenceEntry[];
   interests?: InterestEntry[];
-  custom?: Record<string, unknown>;
 }
 
-export interface Basics {
+export interface Basics extends Extensible {
   givenName: string;
   familyName: string;
   email: string;
@@ -67,7 +81,7 @@ export interface Basics {
   profiles?: SocialProfile[];
 }
 
-export interface Location {
+export interface Location extends Extensible {
   address?: string;
   city?: string;
   region?: string;
@@ -75,13 +89,13 @@ export interface Location {
   countryCode?: string;
 }
 
-export interface SocialProfile {
+export interface SocialProfile extends Extensible {
   network: string;
   url: string;
   username?: string;
 }
 
-export interface WorkEntry {
+export interface WorkEntry extends Extensible {
   organization: string;
   position: string;
   startDate: string;
@@ -94,7 +108,7 @@ export interface WorkEntry {
   highlights?: string[];
 }
 
-export interface EducationEntry {
+export interface EducationEntry extends Extensible {
   institution: string;
   startDate: string;
   url?: string;
@@ -105,23 +119,23 @@ export interface EducationEntry {
   courses?: string[];
 }
 
-export interface SkillCategory {
+export interface SkillCategory extends Extensible {
   category: string;
   items: SkillItem[];
 }
 
-export interface SkillItem {
+export interface SkillItem extends Extensible {
   name: string;
   level?: 'beginner' | 'intermediate' | 'advanced' | 'expert';
 }
 
-export interface LanguageEntry {
+export interface LanguageEntry extends Extensible {
   language: string;
   fluency: 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2' | 'native' | 'bilingual';
   code?: string;
 }
 
-export interface CertificationEntry {
+export interface CertificationEntry extends Extensible {
   name: string;
   issuer: string;
   date?: string;
@@ -129,7 +143,7 @@ export interface CertificationEntry {
   url?: string;
 }
 
-export interface ProjectEntry {
+export interface ProjectEntry extends Extensible {
   name: string;
   description?: string;
   url?: string;
@@ -140,7 +154,7 @@ export interface ProjectEntry {
   roles?: string[];
 }
 
-export interface PublicationEntry {
+export interface PublicationEntry extends Extensible {
   name: string;
   publisher?: string;
   date?: string;
@@ -148,7 +162,7 @@ export interface PublicationEntry {
   summary?: string;
 }
 
-export interface VolunteerEntry {
+export interface VolunteerEntry extends Extensible {
   organization: string;
   position: string;
   url?: string;
@@ -158,7 +172,7 @@ export interface VolunteerEntry {
   highlights?: string[];
 }
 
-export interface ReferenceEntry {
+export interface ReferenceEntry extends Extensible {
   name: string;
   position?: string;
   organization?: string;
@@ -167,7 +181,7 @@ export interface ReferenceEntry {
   relationship?: string;
 }
 
-export interface InterestEntry {
+export interface InterestEntry extends Extensible {
   name: string;
   keywords?: string[];
 }
