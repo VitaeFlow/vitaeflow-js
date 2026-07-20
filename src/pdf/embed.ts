@@ -10,6 +10,17 @@ import {
 import type { Resume } from '../types.js';
 
 /**
+ * Convert a VitaeFlow partial ISO date to the full UTC date required by PDF.
+ * Missing month and day components deterministically default to January 1st.
+ */
+function toPdfDate(value: string | undefined): Date | undefined {
+  if (!value) return undefined;
+
+  const [year, month = '01', day = '01'] = value.split('-');
+  return new Date(Date.UTC(Number(year), Number(month) - 1, Number(day)));
+}
+
+/**
  * Validate a resume and embed it in a PDF document.
  *
  * Validates in strict mode before embedding. If the resume is invalid,
@@ -45,6 +56,8 @@ export async function embedResume(
     mimeType: VITAEFLOW_MIME_TYPE,
     relationship: 'Alternative',
     description: 'VitaeFlow structured resume data',
+    creationDate: toPdfDate(resume.meta?.createdAt),
+    modificationDate: toPdfDate(resume.meta?.updatedAt),
     xmp: {
       namespace: VITAEFLOW_XMP_NAMESPACE,
       prefix: VITAEFLOW_XMP_PREFIX,

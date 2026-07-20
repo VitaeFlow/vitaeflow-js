@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { PDFDocument } from 'pdf-lib';
+import { list } from '@vitaeflow/pdf-embed';
 import { embedResume, extractResume, isVitaeFlowPdf } from '../src/index.js';
 import type { Resume } from '../src/types.js';
 import validResume from './fixtures/valid-resume.json';
@@ -31,6 +32,28 @@ describe('embedResume', () => {
     const result = await embedResume(pdf, validResume as Resume);
 
     expect(await isVitaeFlowPdf(result)).toBe(true);
+  });
+
+  it('should map resume metadata dates to embedded-file dates', async () => {
+    const pdf = await createBlankPdf();
+    const resume = {
+      ...validResume,
+      meta: {
+        createdAt: '2025-02-03',
+        updatedAt: '2026-07-20',
+      },
+    } as Resume;
+
+    const result = await embedResume(pdf, resume);
+    const files = await list(result);
+
+    expect(files).toHaveLength(1);
+    expect(files[0].creationDate).toEqual(
+      new Date('2025-02-03T00:00:00.000Z'),
+    );
+    expect(files[0].modificationDate).toEqual(
+      new Date('2026-07-20T00:00:00.000Z'),
+    );
   });
 
   it('should throw on invalid pdf parameter', async () => {
