@@ -1,5 +1,5 @@
 {
-  "version": "0.1",
+  "version": "0.2",
   "profile": "standard",
   "lang": "fr",
   "basics": {
@@ -13,7 +13,12 @@
       "organization": "TechCorp",
       "position": "Lead Developer",
       "type": "employment",
-      "startDate": "2021-03"
+      "startDate": "2021-03",
+      "extensions": {
+        "com.linkedin": {
+          "positionId": "abc123"
+        }
+      }
     }
   ],
   "education": [

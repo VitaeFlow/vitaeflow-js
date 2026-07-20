@@ -1,5 +1,5 @@
 /** Schema version embedded in this SDK. */
-export const SCHEMA_VERSION = '0.1';
+export const SCHEMA_VERSION = '0.2';
 
 /** Filename used for the embedded JSON in PDFs. */
 export const VITAEFLOW_FILENAME = 'vitaeflow.json';

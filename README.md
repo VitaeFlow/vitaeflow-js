@@ -44,7 +44,7 @@ import { readFileSync, writeFileSync } from 'fs';
 
 const pdf = new Uint8Array(readFileSync('cv.pdf'));
 const resume = {
-  version: '0.1',
+  version: '0.2',
   profile: 'standard',
   basics: { givenName: 'Marie', familyName: 'Laurent', email: 'marie@example.com' },
   work: [{ organization: 'TechCorp', position: 'Lead Dev', startDate: '2021-03' }],
@@ -87,13 +87,30 @@ const has = await isVitaeFlowPdf(pdf); // true or false
 | `embedResume(pdf, resume)` | Validate and embed a resume in a PDF |
 | `extractResume(pdf, options?)` | Extract and validate a resume from a PDF |
 | `isVitaeFlowPdf(pdf)` | Check if a PDF contains VitaeFlow data |
-| `SCHEMA_VERSION` | Current schema version (`'0.1'`) |
+| `SCHEMA_VERSION` | Current schema version (`'0.2'`) |
 
 ## Types
 
 All TypeScript types are exported:
 
-`Resume` `Meta` `Basics` `Location` `SocialProfile` `WorkEntry` `EducationEntry` `SkillCategory` `SkillItem` `LanguageEntry` `CertificationEntry` `ProjectEntry` `PublicationEntry` `VolunteerEntry` `ReferenceEntry` `InterestEntry` `ValidationResult` `ValidationError` `ExtractResult`
+`Resume` `Meta` `Basics` `Location` `SocialProfile` `WorkEntry` `EducationEntry` `SkillCategory` `SkillItem` `LanguageEntry` `CertificationEntry` `ProjectEntry` `PublicationEntry` `VolunteerEntry` `ReferenceEntry` `InterestEntry` `JsonValue` `Extensions` `Extensible` `ValidationResult` `ValidationError` `ExtractResult`
+
+## Extensions
+
+Every structured resume object accepts an optional `extensions` property. Keys use reverse-DNS namespaces and values may contain any JSON data:
+
+```ts
+const work = {
+  organization: 'TechCorp',
+  position: 'Lead Developer',
+  startDate: '2021-03',
+  extensions: {
+    'com.linkedin': { positionId: 'abc123' },
+  },
+};
+```
+
+Unknown extensions are preserved and ignored by consumers that do not understand them. Unknown properties outside `extensions` are still rejected in strict mode.
 
 ## Ecosystem
 

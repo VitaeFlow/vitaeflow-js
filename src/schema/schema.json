@@ -11,7 +11,8 @@
     "version": {
       "type": "string",
       "description": "Schema version (major.minor) used to generate this document.",
-      "pattern": "^[0-9]+\\.[0-9]+$"
+      "pattern": "^[0-9]+\\.[0-9]+$",
+      "examples": ["0.2"]
     },
     "profile": {
       "type": "string",
@@ -41,6 +42,9 @@
         "updatedAt": {
           "$ref": "#/$defs/date",
           "description": "Date the document was last modified."
+        },
+        "extensions": {
+          "$ref": "#/$defs/extensions"
         }
       }
     },
@@ -111,9 +115,15 @@
               "url": {
                 "type": "string",
                 "format": "uri"
+              },
+              "extensions": {
+                "$ref": "#/$defs/extensions"
               }
             }
           }
+        },
+        "extensions": {
+          "$ref": "#/$defs/extensions"
         }
       }
     },
@@ -166,6 +176,9 @@
             "type": "array",
             "description": "Key achievements or responsibilities.",
             "items": { "type": "string" }
+          },
+          "extensions": {
+            "$ref": "#/$defs/extensions"
           }
         }
       }
@@ -208,6 +221,9 @@
             "type": "array",
             "description": "Notable courses taken.",
             "items": { "type": "string" }
+          },
+          "extensions": {
+            "$ref": "#/$defs/extensions"
           }
         }
       }
@@ -239,9 +255,15 @@
                   "type": "string",
                   "description": "Proficiency level.",
                   "enum": ["beginner", "intermediate", "advanced", "expert"]
+                },
+                "extensions": {
+                  "$ref": "#/$defs/extensions"
                 }
               }
             }
+          },
+          "extensions": {
+            "$ref": "#/$defs/extensions"
           }
         }
       }
@@ -268,6 +290,9 @@
             "type": "string",
             "description": "Proficiency level (CEFR or special value).",
             "enum": ["A1", "A2", "B1", "B2", "C1", "C2", "native", "bilingual"]
+          },
+          "extensions": {
+            "$ref": "#/$defs/extensions"
           }
         }
       }
@@ -300,6 +325,9 @@
             "type": "string",
             "format": "uri",
             "description": "URL to verify the certification."
+          },
+          "extensions": {
+            "$ref": "#/$defs/extensions"
           }
         }
       }
@@ -341,6 +369,9 @@
             "type": "array",
             "description": "Roles held in the project.",
             "items": { "type": "string" }
+          },
+          "extensions": {
+            "$ref": "#/$defs/extensions"
           }
         }
       }
@@ -369,6 +400,9 @@
           },
           "summary": {
             "type": "string"
+          },
+          "extensions": {
+            "$ref": "#/$defs/extensions"
           }
         }
       }
@@ -404,6 +438,9 @@
           "highlights": {
             "type": "array",
             "items": { "type": "string" }
+          },
+          "extensions": {
+            "$ref": "#/$defs/extensions"
           }
         }
       }
@@ -438,6 +475,9 @@
           "relationship": {
             "type": "string",
             "description": "Professional relationship (e.g. 'Direct Manager', 'CTO')."
+          },
+          "extensions": {
+            "$ref": "#/$defs/extensions"
           }
         }
       }
@@ -457,14 +497,16 @@
           "keywords": {
             "type": "array",
             "items": { "type": "string" }
+          },
+          "extensions": {
+            "$ref": "#/$defs/extensions"
           }
         }
       }
     },
 
-    "custom": {
-      "type": "object",
-      "description": "Free-form extension data for domain-specific needs."
+    "extensions": {
+      "$ref": "#/$defs/extensions"
     }
   },
 
@@ -473,6 +515,32 @@
       "type": "string",
       "description": "Date in ISO 8601 format: YYYY, YYYY-MM, or YYYY-MM-DD.",
       "pattern": "^[0-9]{4}(-(?:0[1-9]|1[0-2])(-(?:0[1-9]|[12][0-9]|3[01]))?)?$"
+    },
+    "extensions": {
+      "type": "object",
+      "description": "Namespaced extension data. Keys use reverse-DNS notation; values may contain any JSON data.",
+      "propertyNames": {
+        "pattern": "^(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/jsonValue"
+      }
+    },
+    "jsonValue": {
+      "oneOf": [
+        { "type": "string" },
+        { "type": "number" },
+        { "type": "boolean" },
+        { "type": "null" },
+        {
+          "type": "array",
+          "items": { "$ref": "#/$defs/jsonValue" }
+        },
+        {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/$defs/jsonValue" }
+        }
+      ]
     },
     "location": {
       "type": "object",
@@ -496,6 +564,9 @@
           "type": "string",
           "description": "ISO 3166-1 alpha-2 country code.",
           "pattern": "^[A-Z]{2}$"
+        },
+        "extensions": {
+          "$ref": "#/$defs/extensions"
         }
       }
     }
